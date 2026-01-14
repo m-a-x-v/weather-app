@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { Button, TextField, Stack, Typography, Box } from "@mui/material";
+import { useForecast } from "./hooks/useForecast";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [city, setCity] = useState("");
+  const { data, loading, error, loadByCity, loadByGeolocation } =
+    useForecast();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Box
+      sx={{
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Stack spacing={2} sx={{ p: 4, maxWidth: 400, width: "100%" }}>
+        <Typography variant="h5" textAlign="center">
+          Weather Forecast
+        </Typography>
+
+        <Button variant="contained" onClick={loadByGeolocation}>
+          Use my location
+        </Button>
+
+        <TextField
+          label="City"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        />
+
+        <Button
+          variant="outlined"
+          onClick={() => loadByCity(city)}
+          disabled={!city}
+        >
+          Search
+        </Button>
+
+        {loading && <Typography>Loading...</Typography>}
+        {error && <Typography color="error">{error}</Typography>}
+
+        {data && (
+          <Typography variant="body2">
+            Loaded forecast for {data.city.name}
+          </Typography>
+        )}
+      </Stack>
+    </Box>
+  );
 }
 
-export default App
+export default App;
